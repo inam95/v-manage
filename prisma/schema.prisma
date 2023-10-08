@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  id                 String             @id @default(cuid())
+  vin                String             @unique
+  plate              String
+  vehicleType        VehicleType
+  vehicleStatus      VehicleStatus
+  insProvider        InsuranceProviders
+  insExpire          DateTime
+  registrationExpire DateTime
+
+  Trip Trip[]
+}
+
+model Driver {
+  id         String       @id @default(cuid())
+  license    String       @unique
+  employeeId String       @unique
+  firstName  String
+  lastName   String
+  age        Int
+  status     DriverStatus
+
+  Trip     Trip[]
+  expenses Expense[]
+}
+
+model Trip {
+  id            String   @id @default(cuid())
+  startLocation String
+  endLocation   String
+  startTime     DateTime
+  endTime       DateTime
+  mileage       Float
+  fuelConsumed  Float
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [vin])
+  driver  Driver  @relation(fields: [driverId], references: [license])
+
+  vehicleId String
+  driverId  String
+}
+
+model Expense {
+  id           String  @id @default(cuid())
+  amount       Float
+  description  String
+  isReimbursed Boolean // Indicates whether the expense is reimbursed by the manager
+
+  Driver   Driver? @relation(fields: [driverId], references: [license])
+  driverId String?
+}
+
+enum VehicleType {
+  LIGHT_TRUCK
+  HEAVY_TRUCK
+  MINI_VAN
+  VAN
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  UNAVAILABLE
+  MAINTENANCE
+}
+
+enum DriverStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum InsuranceProviders {
+  CEYLINCO
+  ALLIANZ
+  SLI
+  UNION
+  JANASHAKTHI
+  AIA
+  LOLC
+}

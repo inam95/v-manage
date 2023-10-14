@@ -15,8 +15,6 @@ import Image from "next/image";
 import { trpc } from "./_trpc/client";
 
 export default function Home() {
-  const { data } = trpc.test.useQuery();
-
   return (
     <main className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">

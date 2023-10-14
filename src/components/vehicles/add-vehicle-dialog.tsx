@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
 import AddVehicleForm from "./add-vehicle-form";
 
-interface AddVehicleDialogProps {}
+type AddVehicleDialogProps = (
+  | {
+      action: "add";
+    }
+  | {
+      action: "edit";
+      vin: string;
+    }
+) &
+  PropsWithChildren;
 
-export default function AddVehicleDialog({}: AddVehicleDialogProps) {
+export default function AddVehicleDialog(props: AddVehicleDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog
@@ -19,13 +28,24 @@ export default function AddVehicleDialog({}: AddVehicleDialogProps) {
       }}
     >
       <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-        <Button>Add a vehicle</Button>
+        {props.children}
       </DialogTrigger>
       <DialogContent>
         <div>
           <h3 className="text-lg font-medium">Add a vehicle</h3>
         </div>
-        <AddVehicleForm />
+        {props.action === "add" ? (
+          <AddVehicleForm
+            hideDialog={() => setIsOpen(false)}
+            formType={props.action}
+          />
+        ) : props.action === "edit" ? (
+          <AddVehicleForm
+            hideDialog={() => setIsOpen(false)}
+            formType={props.action}
+            vin={props.vin}
+          />
+        ) : null}
       </DialogContent>
     </Dialog>
   );

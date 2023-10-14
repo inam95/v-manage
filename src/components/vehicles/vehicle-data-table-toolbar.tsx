@@ -13,77 +13,77 @@ interface VehicleDataTableToolbarProps<TData> {
 const vehicleStatuses = [
   {
     label: "Available",
-    value: "AVAILABLE"
+    value: "AVAILABLE",
   },
   {
     label: "Unavailable",
-    value: "UNAVAILABLE"
+    value: "UNAVAILABLE",
   },
   {
     label: "Maintenance",
-    value: "MAINTENANCE"
-  }
+    value: "MAINTENANCE",
+  },
 ];
 
 const vehicleTypes = [
   {
     label: "Light truck",
-    value: "LIGHT_TRUCK"
+    value: "LIGHT_TRUCK",
   },
   {
     label: "Heavy truck",
-    value: "HEAVY_TRUCK"
+    value: "HEAVY_TRUCK",
   },
   {
     label: "Mini van",
-    value: "MINI_VAN"
+    value: "MINI_VAN",
   },
   {
     label: "Van",
-    value: "VAN"
-  }
+    value: "VAN",
+  },
 ];
 
 const insProviders = [
   {
     label: "Ceylinco Insurance",
-    value: "CEYLINCO"
+    value: "CEYLINCO",
   },
   {
     label: "Allianz Insurance Lanka Ltd",
-    value: "ALLIANZ"
+    value: "ALLIANZ",
   },
   {
     label: "Sri Lanka Insurance Corporation",
-    value: "SLI"
+    value: "SLI",
   },
   {
     label: "Union Assurance",
-    value: "UNION"
+    value: "UNION",
   },
   {
     label: "Janashakthi Insurance",
-    value: "JANASHAKTHI"
+    value: "JANASHAKTHI",
   },
   {
     label: "AIA Insurance Lanka",
-    value: "AIA"
+    value: "AIA",
   },
   {
     label: "LOLC Insurance",
-    value: "LOLC"
-  }
+    value: "LOLC",
+  },
 ];
 
 export default function VehicleDataTableToolbar<TData>({
-  table
+  table,
 }: VehicleDataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
+          placeholder="Filter vehicle by VIN..."
           value={(table.getColumn("vin")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("vin")?.setFilterValue(event.target.value)

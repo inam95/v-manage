@@ -36,13 +36,18 @@ export default function MainNav({ className, ...props }: MainNavProps) {
       >
         Vehicles
       </Link>
-      {/* <Link
-        href="/trip"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Trips
-      </Link>
       <Link
+        href="/drivers"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          {
+            "text-primary": pathname === "/drivers",
+          }
+        )}
+      >
+        Drivers
+      </Link>
+      {/* <Link
         href="/examples/dashboard"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >

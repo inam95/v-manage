@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type DefaultValues } from "react-hook-form";
 import * as z from "zod";
 
 import { trpc } from "@/app/_trpc/client";
@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { da } from "date-fns/locale";
 
 const addVehicleSchema = z.object({
   vin: z.string().min(1, {
@@ -58,24 +59,89 @@ const addVehicleSchema = z.object({
 
 type TAddVehicleSchema = z.infer<typeof addVehicleSchema>;
 
-export default function AddVehicleForm() {
+const addVehicleDefaultValues: DefaultValues<TAddVehicleSchema> = {
+  vin: "",
+  plate: "",
+};
+
+type AddVehicleFormProps = (
+  | {
+      formType: "add";
+    }
+  | {
+      formType: "edit";
+      vin: string;
+    }
+) & {
+  hideDialog: () => void;
+};
+
+export default function AddVehicleForm(props: AddVehicleFormProps) {
   const form = useForm<TAddVehicleSchema>({
     resolver: zodResolver(addVehicleSchema),
     mode: "onChange",
+    defaultValues: addVehicleDefaultValues,
   });
-
-  const { mutate } = trpc.addVehicle.useMutation();
+  const utils = trpc.useContext();
+  const { mutate: addVehicle } = trpc.addVehicle.useMutation();
+  const { mutate: updateVehicle } = trpc.updateVehicle.useMutation();
+  const { data: selectedVehicle } = trpc.getVehicle.useQuery(
+    { vin: props.formType === "edit" ? props.vin : "" },
+    {
+      select: (data) => {
+        return {
+          ...data,
+          registrationExpire: new Date(data.registrationExpire),
+          insExpire: new Date(data.insExpire),
+        };
+      },
+      onSuccess: (data) => {
+        form.reset(data);
+      },
+      enabled: props.formType === "edit",
+    }
+  );
 
   const onSubmit = (data: TAddVehicleSchema) => {
-    mutate({
-      vin: data.vin,
-      plate: data.plate,
-      insProvider: data.insProvider,
-      vehicleStatus: data.vehicleStatus,
-      vehicleType: data.vehicleType,
-      registrationExpire: data.registrationExpire,
-      insExpire: data.insExpire,
-    });
+    if (props.formType === "add") {
+      addVehicle(
+        {
+          vin: data.vin,
+          plate: data.plate,
+          insProvider: data.insProvider,
+          vehicleStatus: data.vehicleStatus,
+          vehicleType: data.vehicleType,
+          registrationExpire: data.registrationExpire,
+          insExpire: data.insExpire,
+        },
+        {
+          onSettled: () => {
+            utils.getVehicles.invalidate();
+          },
+        }
+      );
+    } else if (props.formType === "edit") {
+      updateVehicle(
+        {
+          vin: data.vin,
+          updateValues: {
+            vin: data.vin,
+            plate: data.plate,
+            insProvider: data.insProvider,
+            vehicleStatus: data.vehicleStatus,
+            vehicleType: data.vehicleType,
+            registrationExpire: data.registrationExpire,
+            insExpire: data.insExpire,
+          },
+        },
+        {
+          onSettled: () => {
+            utils.getVehicles.invalidate();
+          },
+        }
+      );
+    }
+    props.hideDialog();
   };
 
   return (
@@ -151,7 +217,7 @@ export default function AddVehicleForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Vehicle Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a vehicle type" />
@@ -174,7 +240,7 @@ export default function AddVehicleForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Vehicle Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select vehicle status" />
@@ -196,7 +262,7 @@ export default function AddVehicleForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Insurance Provider</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select the vehicle insurance provider" />
@@ -257,7 +323,7 @@ export default function AddVehicleForm() {
           )}
         />
         <div className="flex justify-end gap-x-2">
-          <Button variant="outline" type="button">
+          <Button variant="outline" type="button" onClick={props.hideDialog}>
             Cancel
           </Button>
           <Button type="submit">Add</Button>

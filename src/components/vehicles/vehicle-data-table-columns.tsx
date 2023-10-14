@@ -8,14 +8,14 @@ import { format } from "date-fns";
 const vehicleStatusMap: Record<string, string> = {
   AVAILABLE: "Available",
   UNAVAILABLE: "Unavailable",
-  MAINTENANCE: "Maintenance"
+  MAINTENANCE: "Maintenance",
 };
 
 const vehicleTypeMap: Record<string, string> = {
   LIGHT_TRUCK: "Light truck",
   HEAVY_TRUCK: "Heavy truck",
   MINI_VAN: "Mini van",
-  VAN: "Van"
+  VAN: "Van",
 };
 
 const insProviderMap: Record<string, string> = {
@@ -25,31 +25,31 @@ const insProviderMap: Record<string, string> = {
   UNION: "Union Assurance",
   JANASHAKTHI: "Janashakthi Insurance",
   AIA: "AIA Insurance Lanka",
-  LOLC: "LOLC Insurance"
+  LOLC: "LOLC Insurance",
 };
 
 export const columns: ColumnDef<Vehicle>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false
+  // },
   {
     accessorKey: "vin",
     header: ({ column }) => (
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("vin")}</div>,
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
     accessorKey: "plate",
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Vehicle>[] = [
       );
     },
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
     accessorKey: "vehicleStatus",
@@ -94,7 +94,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     enableHiding: false,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
   },
   {
     accessorKey: "vehicleType",
@@ -114,7 +114,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     enableHiding: false,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
   },
   {
     accessorKey: "insProvider",
@@ -137,7 +137,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     enableHiding: false,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
   },
   {
     accessorKey: "insExpire",
@@ -157,7 +157,7 @@ export const columns: ColumnDef<Vehicle>[] = [
       );
     },
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
     accessorKey: "registrationExpire",
@@ -177,10 +177,10 @@ export const columns: ColumnDef<Vehicle>[] = [
       );
     },
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
     id: "actions",
-    cell: ({ row }) => <VehicleDataTableRowActions row={row} />
-  }
+    cell: ({ row }) => <VehicleDataTableRowActions row={row} />,
+  },
 ];

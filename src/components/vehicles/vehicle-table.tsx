@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable
+  useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
 import {
@@ -21,7 +21,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "../ui/table";
 import VehicleDataTableToolbar from "./vehicle-data-table-toolbar";
 
@@ -32,7 +32,7 @@ interface VehicleDataTableProps<TData, TValue> {
 
 export default function VehicleDataTable<TData, TValue>({
   columns,
-  data
+  data,
 }: VehicleDataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -46,7 +46,7 @@ export default function VehicleDataTable<TData, TValue>({
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters
+      columnFilters,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -58,7 +58,7 @@ export default function VehicleDataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues()
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
     <div className="space-y-4">

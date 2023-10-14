@@ -28,7 +28,9 @@ export default function VehiclePage({}: VehiclePageProps) {
       <div className="flex items-center justify-between ">
         <h2 className="text-3xl font-bold tracking-tight">Vehicles</h2>
         <div className="flex items-center space-x-2">
-          <AddVehicleDialog />
+          <AddVehicleDialog action="add">
+            <Button>Add a vehicle</Button>
+          </AddVehicleDialog>
         </div>
       </div>
       <div className="h-full flex-1 flex-col mt-8">

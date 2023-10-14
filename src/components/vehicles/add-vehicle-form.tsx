@@ -1,8 +1,15 @@
 "use client";
 
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { trpc } from "@/app/_trpc/client";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
 import {
   Form,
   FormControl,
@@ -11,22 +18,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import Link from "next/link";
-import { Calendar } from "./ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+} from "../ui/select";
 
 const addVehicleSchema = z.object({
   vin: z.string().min(1, {
@@ -35,35 +36,46 @@ const addVehicleSchema = z.object({
   plate: z.string().min(1, {
     message: "Vehicle plate number is required.",
   }),
-  vehicleType: z.string({
-    required_error: "Please select an vehicle type.",
-  }),
-  vehicleStatus: z.string({
-    required_error: "Please select an vehicle status.",
-  }),
-  insProvider: z.string().min(1, {
-    message: "Vehicle insurance provider is required.",
-  }),
-  insExpire: z.date({
-    required_error: "Please provide a the insurance expire date.",
-  }),
   registrationExpire: z.date({
     required_error: "Please provide a the registration expire date.",
   }),
+  vehicleType: z.enum(["LIGHT_TRUCK", "HEAVY_TRUCK", "MINI_VAN", "VAN"], {
+    required_error: "Please select an vehicle type.",
+  }),
+  vehicleStatus: z.enum(["AVAILABLE", "UNAVAILABLE", "MAINTENANCE"], {
+    required_error: "Please select an vehicle status.",
+  }),
+  insProvider: z.enum(
+    ["CEYLINCO", "ALLIANZ", "SLI", "UNION", "JANASHAKTHI", "AIA", "LOLC"],
+    {
+      required_error: "Vehicle insurance provider is required.",
+    }
+  ),
+  insExpire: z.date({
+    required_error: "Please provide a the insurance expire date.",
+  }),
 });
 
-type addVehicleFormValues = z.infer<typeof addVehicleSchema>;
+type TAddVehicleSchema = z.infer<typeof addVehicleSchema>;
 
-interface AddVehicleFormProps {}
-
-export default function AddVehicleForm({}: AddVehicleFormProps) {
-  const form = useForm<addVehicleFormValues>({
+export default function AddVehicleForm() {
+  const form = useForm<TAddVehicleSchema>({
     resolver: zodResolver(addVehicleSchema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: addVehicleFormValues) => {
-    console.log(data);
+  const { mutate } = trpc.addVehicle.useMutation();
+
+  const onSubmit = (data: TAddVehicleSchema) => {
+    mutate({
+      vin: data.vin,
+      plate: data.plate,
+      insProvider: data.insProvider,
+      vehicleStatus: data.vehicleStatus,
+      vehicleType: data.vehicleType,
+      registrationExpire: data.registrationExpire,
+      insExpire: data.insExpire,
+    });
   };
 
   return (
@@ -158,6 +170,28 @@ export default function AddVehicleForm({}: AddVehicleFormProps) {
         />
         <FormField
           control={form.control}
+          name="vehicleStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Vehicle Status</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select vehicle status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="AVAILABLE">Available</SelectItem>
+                  <SelectItem value="UNAVAILABLE">Unavailable</SelectItem>
+                  <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="insProvider"
           render={({ field }) => (
             <FormItem>
@@ -222,6 +256,12 @@ export default function AddVehicleForm({}: AddVehicleFormProps) {
             </FormItem>
           )}
         />
+        <div className="flex justify-end gap-x-2">
+          <Button variant="outline" type="button">
+            Cancel
+          </Button>
+          <Button type="submit">Add</Button>
+        </div>
       </form>
     </Form>
   );

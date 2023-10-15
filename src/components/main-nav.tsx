@@ -23,7 +23,7 @@ export default function MainNav({ className, ...props }: MainNavProps) {
           }
         )}
       >
-        Overview
+        Dashboard
       </Link>
       <Link
         href="/vehicles"
@@ -47,12 +47,17 @@ export default function MainNav({ className, ...props }: MainNavProps) {
       >
         Drivers
       </Link>
-      {/* <Link
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      <Link
+        href="/trips"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          {
+            "text-primary": pathname === "/trips",
+          }
+        )}
       >
-        Settings
-      </Link> */}
+        Trips
+      </Link>
     </nav>
   );
 }

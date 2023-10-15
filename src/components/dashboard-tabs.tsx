@@ -1,6 +1,5 @@
 "use client";
 
-import { OverviewTable } from "./overview-table";
 import {
   Card,
   CardContent,

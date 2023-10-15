@@ -105,13 +105,14 @@ export const appRouter = router({
   getDriver: publicProcedure
     .input(
       z.object({
-        license: z.string(),
+        employeeId: z.string(),
       })
     )
     .query(async ({ input }) => {
+      console.log(input.employeeId);
       const driver = await db.driver.findFirst({
         where: {
-          license: input.license,
+          employeeId: input.employeeId,
         },
       });
       if (!driver) {
@@ -142,7 +143,7 @@ export const appRouter = router({
   updateDriver: publicProcedure
     .input(
       z.object({
-        license: z.string(),
+        employeeId: z.string(),
         updateValues: z.object({
           license: z.string(),
           employeeId: z.string(),
@@ -156,11 +157,42 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       const updatedDriver = await db.driver.update({
         where: {
-          license: input.license,
+          employeeId: input.employeeId,
         },
         data: input.updateValues,
       });
       return updatedDriver;
+    }),
+
+  // Trip APIs
+  getTrips: publicProcedure.query(async () => {
+    const trips = await db.trip.findMany({});
+    return trips;
+  }),
+
+  addTrip: publicProcedure
+    .input(
+      z.object({
+        startLocation: z.string(),
+        endLocation: z.string(),
+        mileage: z.number(),
+        fuelConsumed: z.number(),
+        vehicleId: z.string(),
+        driverId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const trip = await db.trip.create({
+        data: {
+          startLocation: input.startLocation,
+          endLocation: input.endLocation,
+          mileage: input.mileage,
+          fuelConsumed: input.fuelConsumed,
+          vehicleId: input.vehicleId,
+          driverId: input.driverId,
+        },
+      });
+      return trip;
     }),
 });
 

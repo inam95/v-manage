@@ -4,11 +4,7 @@ import { useForm, type DefaultValues } from "react-hook-form";
 import * as z from "zod";
 
 import { trpc } from "@/app/_trpc/client";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
 import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
 import {
   Form,
   FormControl,
@@ -19,7 +15,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Select,
   SelectContent,
@@ -71,7 +66,7 @@ type AddDriverFormProps = (
     }
   | {
       formType: "edit";
-      vin: string;
+      employeeId: string;
     }
 ) & {
   hideDialog: () => void;
@@ -85,6 +80,22 @@ export default function AddDriverForm(props: AddDriverFormProps) {
   });
   const utils = trpc.useContext();
   const { mutate: addDriver } = trpc.addDriver.useMutation();
+  const { mutate: updateDriver } = trpc.updateDriver.useMutation();
+  const { data: selectedDriver } = trpc.getDriver.useQuery(
+    { employeeId: props.formType === "edit" ? props.employeeId : "" },
+    {
+      select: (data) => {
+        return {
+          ...data,
+          age: data.age.toString(),
+        };
+      },
+      onSuccess: (data) => {
+        form.reset(data);
+      },
+      enabled: props.formType === "edit",
+    }
+  );
 
   const onSubmit = (data: TAddDriverSchema) => {
     if (props.formType === "add") {
@@ -99,11 +110,31 @@ export default function AddDriverForm(props: AddDriverFormProps) {
         },
         {
           onSettled: () => {
-            utils.getVehicles.invalidate();
+            utils.getDrivers.invalidate();
+          },
+        }
+      );
+    } else if (props.formType === "edit") {
+      updateDriver(
+        {
+          employeeId: data.employeeId,
+          updateValues: {
+            employeeId: data.employeeId,
+            license: data.license,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            age: Number(data.age),
+            status: data.status,
+          },
+        },
+        {
+          onSettled: () => {
+            utils.getDrivers.invalidate();
           },
         }
       );
     }
+    props.hideDialog();
   };
   return (
     <Form {...form}>

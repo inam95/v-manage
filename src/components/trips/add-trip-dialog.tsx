@@ -2,20 +2,20 @@
 
 import { PropsWithChildren, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import AddDriverForm from "./add-driver-form";
+import AddTripForm from "./add-trip-form";
 
-type AddDriverDialogProps = (
+type AddTripDialogProps = (
   | {
       action: "add";
     }
   | {
       action: "edit";
-      employeeId: string;
+      vin: string;
     }
 ) &
   PropsWithChildren;
 
-export default function AddDriverDialog(props: AddDriverDialogProps) {
+export default function AddTripDialog(props: AddTripDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog
@@ -32,19 +32,19 @@ export default function AddDriverDialog(props: AddDriverDialogProps) {
       <DialogContent>
         <div>
           <h3 className="text-lg font-medium">
-            {props.action === "add" ? "Add driver" : "Update driver"}
+            {props.action === "add" ? "Add Trip" : "Update Trip"}
           </h3>
         </div>
         {props.action === "add" ? (
-          <AddDriverForm
+          <AddTripForm
             hideDialog={() => setIsOpen(false)}
             formType={props.action}
           />
         ) : props.action === "edit" ? (
-          <AddDriverForm
+          <AddTripForm
             hideDialog={() => setIsOpen(false)}
             formType={props.action}
-            employeeId={props.employeeId}
+            vin={props.vin}
           />
         ) : null}
       </DialogContent>

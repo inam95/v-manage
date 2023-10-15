@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 InsuranceProviders;
 
 export const appRouter = router({
+  // Vehicle APIs
   getVehicles: publicProcedure.query(async () => {
     const vehicles = await db.vehicle.findMany();
     return vehicles;
@@ -92,6 +93,74 @@ export const appRouter = router({
         },
         data: input.updateValues,
       });
+      return updatedVehicle;
+    }),
+
+  // Driver APIs
+  getDrivers: publicProcedure.query(async () => {
+    const drivers = await db.driver.findMany({});
+    return drivers;
+  }),
+
+  getDriver: publicProcedure
+    .input(
+      z.object({
+        license: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const driver = await db.driver.findFirst({
+        where: {
+          license: input.license,
+        },
+      });
+      if (!driver) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return driver;
+    }),
+
+  addDriver: publicProcedure
+    .input(
+      z.object({
+        license: z.string(),
+        employeeId: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        age: z.coerce.number(),
+        status: z.enum(["AVAILABLE", "UNAVAILABLE"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const driver = await db.driver.create({
+        data: input,
+      });
+
+      return driver;
+    }),
+
+  updateDriver: publicProcedure
+    .input(
+      z.object({
+        license: z.string(),
+        updateValues: z.object({
+          license: z.string(),
+          employeeId: z.string(),
+          firstName: z.string(),
+          lastName: z.string(),
+          age: z.coerce.number(),
+          status: z.enum(["AVAILABLE", "UNAVAILABLE"]),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updatedDriver = await db.driver.update({
+        where: {
+          license: input.license,
+        },
+        data: input.updateValues,
+      });
+      return updatedDriver;
     }),
 });
 

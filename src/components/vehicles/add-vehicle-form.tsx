@@ -28,7 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { da } from "date-fns/locale";
 
 const addVehicleSchema = z.object({
   vin: z.string().min(1, {
@@ -326,7 +325,9 @@ export default function AddVehicleForm(props: AddVehicleFormProps) {
           <Button variant="outline" type="button" onClick={props.hideDialog}>
             Cancel
           </Button>
-          <Button type="submit">Add</Button>
+          <Button type="submit">
+            {props.formType === "add" ? "Add" : "Update"}
+          </Button>
         </div>
       </form>
     </Form>

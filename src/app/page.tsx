@@ -1,8 +1,6 @@
 "use client";
 
 import DashboardTabs from "@/components/dashboard-tabs";
-import { CalendarDateRangePicker } from "@/components/date-range-picker";
-import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -10,8 +8,8 @@ export default function Home() {
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
         <div className="flex items-center space-x-2">
-          <CalendarDateRangePicker />
-          <Button>Download</Button>
+          {/* <CalendarDateRangePicker /> */}
+          {/* <Button>Download</Button> */}
         </div>
       </div>
       <DashboardTabs />

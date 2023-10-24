@@ -37,17 +37,18 @@ model Driver {
 }
 
 model Trip {
-  id            String @id @default(cuid())
+  id            String  @id @default(cuid())
   startLocation String
   endLocation   String
   mileage       Float
   fuelConsumed  Float
+  isEnded       Boolean @default(false)
 
-  vehicle Vehicle @relation(fields: [vehicleId], references: [vin])
-  driver  Driver  @relation(fields: [driverId], references: [employeeId])
+  vehicle Vehicle @relation(fields: [vin], references: [vin])
+  driver  Driver  @relation(fields: [employeeId], references: [employeeId])
 
-  vehicleId String
-  driverId  String
+  vin        String
+  employeeId String
 }
 
 model Expense {
@@ -56,8 +57,8 @@ model Expense {
   description  String
   isReimbursed Boolean // Indicates whether the expense is reimbursed by the manager
 
-  Driver   Driver? @relation(fields: [driverId], references: [employeeId])
-  driverId String?
+  Driver     Driver? @relation(fields: [employeeId], references: [employeeId])
+  employeeId String?
 }
 
 enum VehicleType {

@@ -233,28 +233,30 @@ export default function AddVehicleForm(props: AddVehicleFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="vehicleStatus"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Vehicle Status</FormLabel>
-              <Select onValueChange={field.onChange} {...field}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vehicle status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="AVAILABLE">Available</SelectItem>
-                  <SelectItem value="UNAVAILABLE">Unavailable</SelectItem>
-                  <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {props.formType !== "edit" && (
+          <FormField
+            control={form.control}
+            name="vehicleStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Vehicle Status</FormLabel>
+                <Select onValueChange={field.onChange} {...field}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select vehicle status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="AVAILABLE">Available</SelectItem>
+                    <SelectItem value="UNAVAILABLE">Unavailable</SelectItem>
+                    <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="insProvider"

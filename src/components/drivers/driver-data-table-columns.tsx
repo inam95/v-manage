@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import DriverDataTableColumnHeader from "./driver-data-table-column-header";
 import DriverDataTableRowActions from "./driver-data-table-row-action";
 
-const driverStatusMap: Record<string, string> = {
+export const driverStatusMap: Record<string, string> = {
   AVAILABLE: "Available",
   UNAVAILABLE: "Unavailable",
 };

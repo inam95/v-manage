@@ -5,6 +5,7 @@ import { Checkbox } from "../ui/checkbox";
 // import TripDataTableRowActions from "./trip-data-table-row-action";
 import { format } from "date-fns";
 import TripTableDataColumnHeader from "./trip-data-table-column-header";
+import { vehicleTypeMap } from "../vehicles/vehicle-data-table-columns";
 
 export const columns: ColumnDef<Trip>[] = [
   {
@@ -13,7 +14,11 @@ export const columns: ColumnDef<Trip>[] = [
       <TripTableDataColumnHeader column={column} title="Start Location" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("startLocation")}</div>
+      <div className="flex space-x-2">
+        <span className="max-w-[500px] truncate font-medium">
+          {row.getValue("startLocation")}
+        </span>
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -73,15 +78,20 @@ export const columns: ColumnDef<Trip>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "driverId",
+    accessorKey: "employeeId",
     header: ({ column }) => (
       <TripTableDataColumnHeader column={column} title="Driver" />
     ),
     cell: ({ row }) => {
+      const driverName = `${row.original.driver.firstName} ${row.original.driver.lastName}`;
+
       return (
-        <div className="flex space-x-2">
+        <div className="flex flex-col">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("driverId")}
+            {driverName}
+          </span>
+          <span className="max-w-[500px] truncate font-medium">
+            ({row.original.driver.license})
           </span>
         </div>
       );
@@ -90,15 +100,18 @@ export const columns: ColumnDef<Trip>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "vehicleId",
+    accessorKey: "vin",
     header: ({ column }) => (
-      <TripTableDataColumnHeader column={column} title="Driver" />
+      <TripTableDataColumnHeader column={column} title="Vehicle" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex space-x-2">
+        <div className="flex flex-col">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("vehicleId")}
+            {row.original.vehicle.plate}
+          </span>
+          <span className="max-w-[500px] truncate font-medium">
+            ({vehicleTypeMap[row.original.vehicle.vehicleType]})
           </span>
         </div>
       );

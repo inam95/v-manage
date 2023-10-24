@@ -109,7 +109,6 @@ export const appRouter = router({
       })
     )
     .query(async ({ input }) => {
-      console.log(input.employeeId);
       const driver = await db.driver.findFirst({
         where: {
           employeeId: input.employeeId,
@@ -166,7 +165,25 @@ export const appRouter = router({
 
   // Trip APIs
   getTrips: publicProcedure.query(async () => {
-    const trips = await db.trip.findMany({});
+    const trips = await db.trip.findMany({
+      include: {
+        driver: {
+          select: {
+            employeeId: true,
+            firstName: true,
+            lastName: true,
+            license: true,
+          },
+        },
+        vehicle: {
+          select: {
+            vin: true,
+            plate: true,
+            vehicleType: true,
+          },
+        },
+      },
+    });
     return trips;
   }),
 
@@ -177,8 +194,8 @@ export const appRouter = router({
         endLocation: z.string(),
         mileage: z.number(),
         fuelConsumed: z.number(),
-        vehicleId: z.string(),
-        driverId: z.string(),
+        vin: z.string(),
+        employeeId: z.string(),
       })
     )
     .mutation(async ({ input }) => {
@@ -188,11 +205,54 @@ export const appRouter = router({
           endLocation: input.endLocation,
           mileage: input.mileage,
           fuelConsumed: input.fuelConsumed,
-          vehicleId: input.vehicleId,
-          driverId: input.driverId,
+          vin: input.vin,
+          employeeId: input.employeeId,
+        },
+      });
+      await db.driver.update({
+        where: {
+          employeeId: input.employeeId,
+        },
+        data: {
+          status: "UNAVAILABLE",
+        },
+      });
+
+      await db.vehicle.update({
+        where: {
+          vin: input.vin,
+        },
+        data: {
+          vehicleStatus: "UNAVAILABLE",
         },
       });
       return trip;
+    }),
+  updateTrip: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db.trip.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isEnded: true,
+          vehicle: {
+            update: {
+              vehicleStatus: "AVAILABLE",
+            },
+          },
+          driver: {
+            update: {
+              status: "AVAILABLE",
+            },
+          },
+        },
+      });
     }),
 });
 

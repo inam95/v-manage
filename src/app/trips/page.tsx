@@ -5,20 +5,33 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "../_trpc/client";
 import TripTable from "@/components/trips/trip-table";
 import { columns } from "@/components/trips/trip-data-table-columns";
+import { $Enums } from "@prisma/client";
 
 export type Trip = {
   startLocation: string;
   endLocation: string;
   mileage: number;
   fuelConsumed: number;
-  vehicleId: string;
-  driverId: string;
+  vin: string;
+  employeeId: string;
+  driver: {
+    employeeId: string;
+    firstName: string;
+    lastName: string;
+    license: string;
+  };
+  vehicle: {
+    vin: string;
+    plate: string;
+    vehicleType: $Enums.VehicleType;
+  };
 };
 
 interface DriverPageProps {}
 
 export default function DriverPage({}: DriverPageProps) {
   const { data: trips } = trpc.getTrips.useQuery();
+
   return (
     <main className="flex-1 p-8 pt-6">
       <div className="flex items-center justify-between ">

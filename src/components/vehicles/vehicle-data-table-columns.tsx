@@ -5,13 +5,13 @@ import VehicleTableDataColumnHeader from "./vehicle-data-table-column-header";
 import VehicleDataTableRowActions from "./vehicle-data-table-row-action";
 import { format } from "date-fns";
 
-const vehicleStatusMap: Record<string, string> = {
+export const vehicleStatusMap: Record<string, string> = {
   AVAILABLE: "Available",
   UNAVAILABLE: "Unavailable",
   MAINTENANCE: "Maintenance",
 };
 
-const vehicleTypeMap: Record<string, string> = {
+export const vehicleTypeMap: Record<string, string> = {
   LIGHT_TRUCK: "Light truck",
   HEAVY_TRUCK: "Heavy truck",
   MINI_VAN: "Mini van",

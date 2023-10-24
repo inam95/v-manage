@@ -99,10 +99,12 @@ export default function AddTripForm(props: AddTripFormProps) {
 
   const { data: drivers } = trpc.getDrivers.useQuery(undefined, {
     select: (data) => {
-      return data.map((driver) => ({
-        value: driver.employeeId,
-        label: `${driver.firstName} ${driver.lastName}`,
-      }));
+      return data
+        .filter((driver) => driver.status === "AVAILABLE")
+        .map((driver) => ({
+          value: driver.employeeId,
+          label: `${driver.firstName} ${driver.lastName}`,
+        }));
     },
     onSuccess: (data) => {
       setDriverOptions(data);
@@ -111,10 +113,12 @@ export default function AddTripForm(props: AddTripFormProps) {
 
   const { data: vehicles } = trpc.getVehicles.useQuery(undefined, {
     select: (data) => {
-      return data.map((vehicle) => ({
-        value: vehicle.vin,
-        label: `${vehicle.plate} (${vehicle.vehicleType})`,
-      }));
+      return data
+        .filter((driver) => driver.vehicleStatus === "AVAILABLE")
+        .map((vehicle) => ({
+          value: vehicle.vin,
+          label: `${vehicle.plate} (${vehicle.vehicleType})`,
+        }));
     },
     onSuccess: (data) => {
       setVehiclesOptions(data);
@@ -131,8 +135,8 @@ export default function AddTripForm(props: AddTripFormProps) {
           endLocation: data.endLocation,
           mileage: Number(data.milage),
           fuelConsumed: Number(data.fuelConsumed),
-          driverId: data.employeeId,
-          vehicleId: data.vin,
+          employeeId: data.employeeId,
+          vin: data.vin,
         },
         {
           onSettled: () => {
